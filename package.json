@@ -1,0 +1,15 @@
+{
+  "name": "paletz",
+  "version": "1.0.0",
+  "description": "Finger game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Vladimir Grinenko <i@tadatuta.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bot-brother": "^2.1.5"
+  }
+}
