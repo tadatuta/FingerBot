@@ -12,12 +12,9 @@ process.env.BOTANIO_KEY && bot.use('before', bb.middlewares.botanio(process.env.
 
 const fingers = ['🖕', '🖖', '☝', '👆', '🖐️', '👌', '✌', '👍', '👈', '👉', '👇', '☝️'];
 
-const db = {};
-
 bot.command('start')
     .invoke(function(ctx) {
-        const chatId = ctx.meta.chat.id;
-        const chat = db[chatId] || (db[chatId] = {});
+        const chat = ctx.session;
         const isBefore = Math.random() > 0.4;
         let question = '';
 
@@ -52,20 +49,20 @@ bot.command('start')
     .answer(function(ctx) {
         ctx.hideKeyboard();
 
-        const chatId = ctx.meta.chat.id;
+        const chat = ctx.session;
         const username = ctx.meta.user.username;
 
-        const isRight = db[chatId].state === ctx.answer;
+        const isRight = ctx.session.state === ctx.answer;
 
         const isFinger = Math.random() > 0.55;
-        db[chatId].state = isFinger;
-        db[chatId].users[username] || (db[chatId].users[username] = {
+        chat.state = isFinger;
+        chat.users[username] || (chat.users[username] = {
             win: 0,
             fail: 0,
             sequence: 0
         });
 
-        const user = db[chatId].users[username];
+        const user = chat.users[username];
         if (isRight) {
             user.win += 1;
             user.sequence += 1;
@@ -85,14 +82,14 @@ bot.command('start')
 
 bot.command('stat')
     .invoke(function(ctx) {
-        const chatId = ctx.meta.chat.id;
-        const users = db[chatId].users;
+        const chat = ctx.session;
+        const users = chat.users;
 
-        if (!db[chatId].users) return;
+        if (!chat.users) return;
 
-        db[chatId].isFromStat = true;
+        chat.isFromStat = true;
 
-        ctx.sendMessage(Object.keys(db[chatId].users).map(username => {
+        ctx.sendMessage(Object.keys(chat.users).map(username => {
             const user = users[username];
             return '@' + username +
                 '\nПобед: ' + user.win + ' (подряд: ' + user.sequence +
