@@ -77,13 +77,11 @@ bot.command('start')
         const shouldMention = Math.random() > 0.6;
 
         const answer = isFinger ?
-            shouldMention ?
-                ('@' + username + ' ' + getRandom(isRight ? triggerYesAnswers : triggerNoAnswers)) :
-                getRandom(isRight ? triggerYesAnswers : triggerNoAnswers) :
+            getRandom(isRight ? triggerYesAnswers : triggerNoAnswers) :
             getRandom(isRight ? yesAnswers : noAnswers);
 
         return ctx
-            .sendMessage(answer)
+            .sendMessage('@' + username + ' ' + answer)
             .then(() => ctx.go('start'));
     });
 
