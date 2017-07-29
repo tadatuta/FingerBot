@@ -50,19 +50,22 @@ bot.command('start')
         ctx.hideKeyboard();
 
         const chat = ctx.session;
-        const username = ctx.meta.user.username;
+        const metaUser = ctx.meta.user;
+        const username = metaUser.username || metaUser.first_name;
 
-        const isRight = ctx.session.state === ctx.answer;
-
-        const isFinger = Math.random() > 0.55;
-        chat.state = isFinger;
         chat.users[username] || (chat.users[username] = {
             win: 0,
             fail: 0,
             sequence: 0
         });
 
+        const isRight = ctx.session.state === ctx.answer;
+
+        const isFinger = Math.random() > 0.55;
+        chat.state = isFinger;
+
         const user = chat.users[username];
+
         if (isRight) {
             user.win += 1;
             user.sequence += 1;
@@ -71,8 +74,12 @@ bot.command('start')
             user.sequence = 0;
         }
 
+        const shouldMention = Math.random() > 0.6;
+
         const answer = isFinger ?
-            getRandom(isRight ? triggerYesAnswers : triggerNoAnswers) :
+            shouldMention ?
+                ('@' + username + ' ' + getRandom(isRight ? triggerYesAnswers : triggerNoAnswers)) :
+                getRandom(isRight ? triggerYesAnswers : triggerNoAnswers) :
             getRandom(isRight ? yesAnswers : noAnswers);
 
         return ctx
