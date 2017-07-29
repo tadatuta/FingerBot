@@ -50,7 +50,7 @@ bot.command('start')
         ctx.hideKeyboard();
 
         const chat = ctx.session;
-        const metaUser = ctx.meta.from || ctx.meta.user;
+        const metaUser = ctx.message.from;
         const username = metaUser.username || metaUser.first_name;
 
         chat.users[username] || (chat.users[username] = {
