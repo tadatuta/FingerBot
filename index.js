@@ -28,9 +28,7 @@ bot.command('start')
                 chat.users = {};
             }
 
-            question = (isFinger ?
-                getRandom(triggerQuestions) :
-                getRandom(questions)) + '\n';
+            question = getRandom(isFinger ? triggerQuestions : questions) + '\n';
         }
 
         return ctx.sendMessage(
