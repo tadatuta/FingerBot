@@ -1,4 +1,3 @@
-const { triggerQuestions, questions, triggerNoAnswers, noAnswers, triggerYesAnswers, yesAnswers, finalParts, fingerWords } = require('./texts');
 const bb = require('bot-brother');
 const bot = bb({
     key: process.env.BOT_KEY,
@@ -10,35 +9,26 @@ const bot = bb({
 bot.use('before', bb.middlewares.typing());
 process.env.BOTANIO_KEY && bot.use('before', bb.middlewares.botanio(process.env.BOTANIO_KEY));
 
-const fingers = ['🖕', '🖖', '☝', '👆', '🖐️', '👌', '✌', '👍', '👈', '👉', '👇', '☝️'];
+const game = require('./lib/game');
 
 bot.command('start')
     .invoke(function(ctx) {
         const chat = ctx.session;
-        const isBefore = Math.random() > 0.4;
-        let question = '';
 
         if (typeof chat.state === 'undefined' || chat.isFromStat) {
-            const isFinger = Math.random() > 0.4;
-            chat.state = isFinger;
-
             if (chat.isFromStat) {
                 chat.isFromStat = false;
             } else {
                 chat.users = {};
             }
 
-            question = getRandom(isFinger ? triggerQuestions : questions) + '\n';
+            const {isFinger, message} = game.onStart();
+            chat.state = isFinger;
+
+            return ctx.sendMessage(message);
         }
 
-        return ctx.sendMessage(
-            (isBefore ? question : '') +
-            getRandom(fingers) + ' — ' + getRandom(fingerWords) + ',\n' +
-            getRandom(fingers) + ' — ' + getRandom(fingerWords) + ',\n' +
-            getRandom(fingers) + ' — ' + getRandom(fingerWords) + '.\n' +
-            getRandom(finalParts) + ' ' + getRandom(fingers) + '?' +
-            (isBefore ? '' : ('\n' + question))
-        );
+        return ctx.sendMessage(game.onStart(chat.state).message);
     })
     .keyboard([
         [{ 'Палец': { value: true } }],
@@ -51,6 +41,8 @@ bot.command('start')
         const metaUser = ctx.message.from;
         const username = metaUser.username || metaUser.first_name;
 
+        chat.users || (chat.users = {});
+
         chat.users[username] || (chat.users[username] = {
             win: 0,
             fail: 0,
@@ -59,8 +51,8 @@ bot.command('start')
 
         const isRight = ctx.session.state === ctx.answer;
 
-        const isFinger = Math.random() > 0.55;
-        chat.state = isFinger;
+        const answer = game.onAnswer(isRight);
+        chat.state = answer.isFinger;
 
         const user = chat.users[username];
 
@@ -72,14 +64,8 @@ bot.command('start')
             user.sequence = 0;
         }
 
-        const shouldMention = Math.random() > 0.6;
-
-        const answer = isFinger ?
-            getRandom(isRight ? triggerYesAnswers : triggerNoAnswers) :
-            getRandom(isRight ? yesAnswers : noAnswers);
-
         return ctx
-            .sendMessage('@' + username + ' ' + answer)
+            .sendMessage('@' + username + ' ' + answer.message)
             .then(() => ctx.go('start'));
     });
 
@@ -102,11 +88,3 @@ bot.command('stat')
     .keyboard([
         [{ 'MOAR!': { go: 'start' } }]
     ]);
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function getRandom(collection) {
-    return collection[getRandomInt(0, collection.length)];
-}

@@ -9,7 +9,7 @@
     "js": "node"
   },
   "watch": [
-    "index.js"
+    "telegram.js"
   ],
   "env": {
     "DEBUG": "*"

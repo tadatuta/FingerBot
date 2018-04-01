@@ -2,9 +2,10 @@
   "name": "paletz",
   "version": "1.0.0",
   "description": "Finger game",
-  "main": "index.js",
+  "main": "telegram.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "dist": "browserify lib/game.js -o dist/browser.js --standalone paletz"
   },
   "keywords": [],
   "author": "Vladimir Grinenko <i@tadatuta.com>",
@@ -13,6 +14,8 @@
     "bot-brother": "^2.1.5"
   },
   "devDependencies": {
+    "browserify": "^14.4.0",
+    "mocha": "^3.5.0",
     "nodemon": "^1.11.0"
   }
 }

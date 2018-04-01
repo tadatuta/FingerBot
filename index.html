@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Finger Paletz</title>
+    <style>
+        body {
+            font-size: 42px;
+            font-family: Arial, sans-serif;
+        }
+
+        .question {
+            margin-bottom: 22px;
+        }
+    </style>
+</head>
+<body>
+    <form class="game">
+        <div class="question"></div>
+        <div class="answer">
+            <label><input name="isFinger" value="1" type="radio">Палец</label>
+            <label><input name="isFinger" value="0" type="radio">Не палец</label>
+        </div>
+    </form>
+    <script src="dist/browser.js"></script>
+    <script>
+        (function(d) {
+            var isFinger,
+                question = d.querySelector('.question');
+
+            function ask() {
+                var state = paletz.onStart(isFinger);
+                question.innerHTML = state.message.replace(/\n/g, '<br>');
+                isFinger = state.isFinger;
+            }
+
+            ask();
+
+            d.querySelectorAll('input').forEach(function(input) {
+                input.addEventListener('change', function(e) {
+                    var input = e.target;
+                    var val = Boolean(+input.value);
+                    var isRight = val === isFinger;
+                    var answer = paletz.onAnswer(isRight);
+                    isFinger = answer.isFinger;
+                    alert(answer.message);
+                    ask();
+
+                    input.checked = false;
+                });
+            });
+        })(document);
+    </script>
+</body>
+</html>
