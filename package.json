@@ -2,16 +2,18 @@
   "name": "paletz",
   "version": "1.0.0",
   "description": "Finger game",
-  "main": "telegram.js",
+  "main": "alice.js",
   "scripts": {
     "test": "mocha",
+    "now-start": "micro",
     "dist": "browserify lib/game.js -o dist/browser.js --standalone paletz"
   },
   "keywords": [],
   "author": "Vladimir Grinenko <i@tadatuta.com>",
   "license": "MIT",
   "dependencies": {
-    "bot-brother": "^2.1.5"
+    "bot-brother": "^2.1.5",
+    "micro": "^9.1.4"
   },
   "devDependencies": {
     "browserify": "^14.4.0",
